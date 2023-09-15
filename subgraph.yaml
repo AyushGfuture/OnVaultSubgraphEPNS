@@ -1,0 +1,102 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: BorrowerOperations
+    network: goerli
+    source:
+      address: "0xA4232aC7D09520F7530B611984eFF5Ff38519F38"
+      abi: BorrowerOperations
+      startBlock: 9675947
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        # - USDAOBorrowingFeePaid
+        # - USDAODebtUpdated
+        - VaultCreated
+        - VaultUpdated
+      abis:
+        - name: BorrowerOperations
+          file: ./abis/BorrowerOperations.json
+      eventHandlers:
+        # - event: USDAOBorrowingFeePaid(indexed address,uint256)
+        #   handler: handleUSDAOBorrowingFeePaid
+        # - event: USDAODebtUpdated(uint256)
+        #   handler: handleUSDAODebtUpdated
+        - event: VaultCreated(indexed address,uint256)
+          handler: handleVaultCreated
+        - event: VaultUpdated(indexed address,uint256,uint256,uint256,uint8)
+          handler: handleVaultUpdated
+      file: ./src/borrower-operations.ts
+  - kind: ethereum
+    name: VaultManager
+    network: goerli
+    source:
+      address: "0x35Bd54bAD498A4Ed25fe5d669c3869fc7DD4a075"
+      abi: VaultManager
+      startBlock: 9675955
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - VaultUpdated
+      abis:
+        - name: VaultManager
+          file: ./abis/VaultManager.json
+      eventHandlers:
+        - event: VaultUpdated(indexed address,uint256,uint256,uint256,uint8)
+          handler: handleVaultUpdated
+      file: ./src/vault-manager.ts
+  - kind: ethereum
+    name: SortedVaults
+    network: goerli
+    source:
+      address: "0x1795aB3Eee473Bd6A947f886631F2EB7e5e9a2e7"
+      abi: SortedVaults
+      startBlock: 9675952
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - NodeAdded
+        - NodeRemoved
+      abis:
+        - name: SortedVaults
+          file: ./abis/SortedVaults.json
+      eventHandlers:
+        - event: NodeAdded(address,uint256)
+          handler: handleNodeAdded
+        - event: NodeRemoved(address)
+          handler: handleNodeRemoved
+      file: ./src/sorted-vaults.ts
+  - kind: ethereum
+    name: StabilityPool
+    network: goerli
+    source:
+      address: "0xCa722a8F5be5b3ABFD28dD654b0EB530Fd946fBB"
+      abi: StabilityPool
+      startBlock: 9675953
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - DistributeReward
+        - ETHGainWithdrawn
+        - ASSETFeeCharged
+      abis:
+        - name: StabilityPool
+          file: ./abis/StabilityPool.json
+      eventHandlers:
+        - event: DistributeReward(indexed address,uint256)
+          handler: handleDistributeReward
+        - event: ETHGainWithdrawn(indexed address,uint256,uint256)
+          handler: handleETHGainWithdrawn
+        - event: ASSETFeeCharged(indexed address,uint256)
+          handler: handleASSETFeeCharged
+      file: ./src/stability-pool.ts
